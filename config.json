@@ -1,0 +1,29 @@
+{
+  "main": {
+    "wait": 60
+  },
+  "heatpump": {
+    "ip": "192.168.42.42",
+    "port": 80,
+    "user": "waterkotte",
+    "pwd":  "waterkotte",
+    "abtastung": 30
+  },
+  "mqtt": {
+    "ip": "127.0.0.1",
+    "port": 1883,
+    "topics": {
+      "root": "wp"
+    }
+  },
+  "logging": {
+    "json": {
+      "enable": false,
+      "filename": "exp_log.json"
+    },
+    "csv": {
+      "enable": false,
+      "filename": "exp_log.csv"
+    }
+  }
+}
