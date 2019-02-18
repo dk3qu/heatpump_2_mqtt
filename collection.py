@@ -22,11 +22,18 @@ class Collection:
                                 self.__config["heatpump"]["user"],
                                 self.__config["heatpump"]["pwd"])
         #
-        self.__con.set_keys(["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A11", "A12", "A14", "A15", "I51"],
-                            0)
-        self.__con.set_keys(["A61"], 1)
+        self.__con.set_keys([
+            "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A11", "A12", "A13", "A14", "A15", "A19", "A25",
+            "A26", "A27", "A28", "A29", "A30", "A31", "A33", "A34", "A37", "A38", "A61", "A90", "A91", "A92", "A93",
+            "A94", "A95", "A96", "A97", "A107", "A108", "A109", "A139", "A1014", "A1035", "A1469", "I8", "I9", "I30",
+            "I31", "I32", "I51", "I52", "I53"],
+            0)
+        self.__con.set_keys([], 1)
         self.__con.set_keys([], 2)
-        self.__con.set_keys([], 3)
+        self.__con.set_keys(
+            ["I5", "I6", "I7", "I10", "I14", "I18", "I20", "I22", "I33", "I41", "I135", "I263", "I1270", "I1281",
+             "I1287", "I1289", "I1291", "I1293", "I1295", "I1297", "I1299", "I1319", "I2020", "I2021", "I2023"],
+            3)
         self.__con.set_keys([], 4)
         #
         self.__lauf = [1, 1, 1, 1, 1]
@@ -76,6 +83,50 @@ class Collection:
 
 
 
+    def into_data_int(self, data, keyname, command, german, unitname):
+        try:
+            val = data[keyname]
+            if val["status"]:
+                self.__data[command] = {
+                    "key": command,
+                    "value": int(val["value"]),
+                    "name": german,
+                    "unit": unitname,
+                    "time": val["time"],
+                    "status": True
+                }
+                logging.debug(
+                    "{0} = {1} {2}".format(self.__data[command]["key"], self.__data[command]["value"],
+                                           self.__data[command]["unit"]))
+            else:
+                self.__data[command]["status"] = False
+        except KeyError:
+            pass
+
+
+
+    def into_data_float(self, data, keyname, command, german, unitname):
+        try:
+            val = data[keyname]
+            if val["status"]:
+                self.__data[command] = {
+                    "key": command,
+                    "value": int(val["value"]) / 10.0,
+                    "name": german,
+                    "unit": unitname,
+                    "time": val["time"],
+                    "status": True
+                }
+                logging.debug(
+                    "{0} = {1} {2}".format(self.__data[command]["key"], self.__data[command]["value"],
+                                           self.__data[command]["unit"]))
+            else:
+                self.__data[command]["status"] = False
+        except KeyError:
+            pass
+
+
+
     def prepare(self, data):
         """
         Fügt die erhaltenen Daten in die passenden Keys ein.
@@ -84,326 +135,89 @@ class Collection:
         logging.debug("Collection - prepare")
 
         #
-        # "A1" : "temperature_outside"
         #
-        try:
-            val = data["A1"]
-            key = "temperature_outside"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Außentemperatur",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
+        #
 
-        #
-        # "A2" : "temperature_outside_1h"
-        #
-        try:
-            val = data["A2"]
-            key = "temperature_outside_1h"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Außentemperatur 1h",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A3" : "temperature_outside_24h"
-        #
-        try:
-            val = data["A3"]
-            key = "temperature_outside_24h"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Außentemperatur 24h",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A4" : "temperature_source_in" : "Quelleneintrittstemperatur
-        #
-        try:
-            val = data["A4"]
-            key = "temperature_source_in"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Quelleneintrittstemperatur",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A5" : "temperature_source_out"
-        #
-        try:
-            val = data["A5"]
-            key = "temperature_source_out"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Quellenaustrittstemperatur",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A6" : "temperature_evaporation" : Verdampfungstemperatur
-        #
-        try:
-            val = data["A6"]
-            key = "temperature_evaporation"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Verdampfungstemperatur",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A7" : "temperature_suction"
-        #
-        try:
-            val = data["A7"]
-            key = "temperature_suction"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Sauggastemperatur",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A8" : "pressure_evaporation" : Verdampfungsdruck
-        #
-        try:
-            val = data["A8"]
-            key = "pressure_evaporation"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Verdampfungsdruck",
-                    "unit": "bar",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A10" : "temperature_return_set" : "Temperatur Rücklauf Soll"
-        #
-        try:
-            val = data["A10"]
-            key = "temperature_return_set"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Temperatur Rücklauf Soll",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A11" : "temperature_return" : "Temperatur Rücklauf"
-        #
-        try:
-            val = data["A11"]
-            key = "temperature_return"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Temperatur Rücklauf",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A12" : "temperature_outside_1h" : "Temperatur Vorlauf"
-        #
-        try:
-            val = data["A12"]
-            key = "temperature_flow"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Temperatur Vorlauf",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A14" : "temperature_condensation" : "Kondensationstemperatur"
-        #
-        try:
-            val = data["A14"]
-            key = "temperature_condensation"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Kondensationstemperatur",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-        #
-        # "A15" : "pressure_condensation" : "Kondensationsdruck"
-        #
-        try:
-            val = data["A15"]
-            key = "pressure_condensation"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Kondensationsdruck",
-                    "unit": "bar",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
+        self.into_data_float(data, "A1", "temp_outside", "Außentemperatur", "°C")
+        self.into_data_float(data, "A2", "temp_outside_1h", "Außentemperatur gemittelt über 1h", "°C")
+        self.into_data_float(data, "A3", "temp_outside_24h", "Außentemperatur gemittelt über 24h", "°C")
+        self.into_data_float(data, "A4", "temp_source_in", "Quelle Eintritt Temp.", "°C")
+        self.into_data_float(data, "A5", "temp_source_out", "Quelle Austritt Temp.", "°C")
+        self.into_data_float(data, "A6", "temp_evaporation", "Verdampfungs Temp.", "°C")
+        self.into_data_float(data, "A7", "temp_suction", "Sauggastemperatur", "°C")
+        self.into_data_float(data, "A8", "press_evaporation", "Verdampfungsdruck", "bar")
+        self.into_data_float(data, "A10", "temp_return_set", "Temperatur Rücklauf Soll", "°C")
+        self.into_data_float(data, "A11", "temp_return", "Temperatur Rücklauf", "°C")
+        self.into_data_float(data, "A12", "temp_flow", "Temperatur Vorlauf", "°C")
+        self.into_data_float(data, "A13", "temp_condensation2", "Kondensationstemperatur 2", "°C")
+        self.into_data_float(data, "A14", "temp_condensation", "Kondensationstemperatur", "°C")
+        self.into_data_float(data, "A15", "press_condensation", "Kondensationsdruck", "bar")
+        self.into_data_float(data, "A19", "temp_water", "Warmwasser-Temp. Aktuell", "°C")
+        self.into_data_float(data, "A25", "power_compressor", "elektrische Leistung Verdichter", "kW")
+        self.into_data_float(data, "A26", "power_heating", "abgegebene thermische Heizleistung der Wärmepumpe", "kW")
+        self.into_data_float(data, "A27", "power_cooling", "abgegebene thermische KälteLeistung der Wärmepumpe", "kW")
+        self.into_data_float(data, "A28", "cop_heating", "COP Heizleistung", "")
+        self.into_data_float(data, "A29", "cop_cooling", "COP Kälteleistungleistung", "")
+        self.into_data_float(data, "A30", "temp_heating", "Heizen-Temp. Akt. Rücklauf", "°C")
+        self.into_data_float(data, "A31", "temp_heating_set", "Heizen-Temp. Soll", "°C")
+        self.into_data_float(data, "A33", "temp_cooling_return", "Aktuelle Kühlkreistemperatur", "°C")
+        self.into_data_float(data, "A34", "temp_cooling_set", "Geforderte Temperatur im Kühlbetrieb", "°C")
+        self.into_data_float(data, "A37", "temp_water_set", "Warmwasser-Temp. Soll", "°C")
+        self.into_data_float(data, "A38", "temp_water_set2", "Warmwasser-Temp. Sollwert", "°C")
+        self.into_data_float(data, "A61", "hysteresis_heating", "Schaltdifferenz Heizen", "°C")
+        self.into_data_float(data, "A90", "temp_out_1h_heating", "Heizkurve - Außentemperatur 1h", "°C")
+        self.into_data_float(data, "A91", "temp_nvi_outside_x1", "Heizkurve - T-Norm-Aussen (x1)", "°C")
+        self.into_data_float(data, "A92", "temp_nvi_heating_y1", "Heizkurve - T-Heizkreis-Norm (y1)", "°C")
+        self.into_data_float(data, "A93", "temp_nvi_outside_x2", "Heizkurve - T-Heizgrenze (x2)", "°C")
+        self.into_data_float(data, "A94", "temp_nvi_heating_y2", "Heizkurve - T-Heizgrenze-Soll (y2)", "°C")
+        self.into_data_float(data, "A95", "nvi_temp_max", "Heizkurve max. VL-Temp", "°C")
+        self.into_data_float(data, "A96", "temp_nvi_heating_set", "Heiztemperatur Soll", "°C")
+        self.into_data_float(data, "A97", "temp_set_0deg", "Heizkreis Soll-Temp bei 0° Aussen", "°C")
+        self.into_data_float(data, "A107", "hysteresis_cooling", "Schaltdifferenz Kühlen", "°C")
+        self.into_data_float(data, "A108", "temp_cooling_enable", "Kühlen Einschalt-Temp. Aussentemp", "°C")
+        self.into_data_float(data, "A109", "temp_cooling", "Heizkurve - nviSollKuehlen", "°C")
+        self.into_data_float(data, "A139", "hysteresis_water", "Schaltdifferenz Warmwasser", "°C")
+        self.into_data_float(data, "A1014", "temp_dt", "Temperatur dT", "°C")
+        self.into_data_float(data, "A1035", "temp_source_dt", "Quelle dT", "°C")
+        self.into_data_float(data, "A1469", "expansion_valve", "% Ventilöffnung elektrisches Expansionsventil", "%")
+        self.into_data_int(data, "I5", "date_day", "Datum: Tag", "")
+        self.into_data_int(data, "I6", "date_month", "Datum: Monat", "")
+        self.into_data_int(data, "I7", "date_year", "Datum: Jahr", "")
+        self.into_data_int(data, "I8", "time_hour", "Uhrzeit: Stunde", "")
+        self.into_data_int(data, "I9", "time_minute", "Uhrzeit: Minute", "")
+        self.into_data_int(data, "I10", "operating_hours_compressor1", "Betriebsstunden Verdichter 1", "h")
+        self.into_data_int(data, "I14", "operating_hours_compressor2", "Betriebsstunden Verdichter 2", "h")
+        self.into_data_int(data, "I18", "operating_hours_circulation_pump", "Betriebsstunden Heizungsumwälzpumpe",
+                             "h")
+        self.into_data_int(data, "I20", "operating_hours_source_pump", "Betriebsstunden Quellenpumpe", "h")
+        self.into_data_int(data, "I22", "operating_hours_solar", "Betriebsstunden Solarkreis", "h")
+        self.into_data_int(data, "I30", "enable_heating", "Handabschaltung Heizbetrieb", "")
+        self.into_data_int(data, "I31", "enable_cooling", "Handabschaltung Kühlbetrieb", "")
+        self.into_data_int(data, "I32", "enable_warmwater", "Handabschaltung Warmwasserbetrieb", "")
+        self.into_data_int(data, "I33", "enable_pool", "Handabschaltung Pool_Heizbetrieb", "")
+        self.into_data_int(data, "I41", "enable_pv", "Betriebsmodus PV 0=Aus, 1=Auto, 2=Ein", "")
+        self.into_data_int(data, "I52", "alarm", "Meldungen von Ausfällen F0xx die zum Wärmepumpenausfall führen", "")
+        self.into_data_int(data, "I53", "interruptions", "Unterbrechungen", "")
+        self.into_data_int(data, "I135", "state_service", "Serviceebene (0: normal, 1: service)", "")
+        self.into_data_float(data, "I263", "adapt_heating", "Temperaturanpassung für die Heizung", "°C")
+        self.into_data_int(data, "I1270", "manual_heatingpump", "Handschaltung Heizungspumpe (H-0-A)", "")
+        self.into_data_int(data, "I1281", "manual_sourcepump", "Handschaltung Quellenpumpe (H-0-A)", "")
+        self.into_data_int(data, "I1287", "manual_solarpump1", "Handschaltung Solarpumpe 1 (H-0-A)", "")
+        self.into_data_int(data, "I1289", "manual_solarpump2", "Handschaltung Solarpumpe 2 (H-0-A)", "")
+        self.into_data_int(data, "I1291", "manual_tankpump", "Handschaltung Speicherladepumpe (H-0-A)", "")
+        self.into_data_int(data, "I1293", "manual_valve", "Handschaltung Brauchwasserventil (H-0-A)", "")
+        self.into_data_int(data, "I1295", "manual_poolvalve", "Handschaltung Poolventil (H-0-A)", "")
+        self.into_data_int(data, "I1297", "manual_coolvalve", "Handschaltung Kühlventil (H-0-A)", "")
+        self.into_data_int(data, "I1299", "manual_4wayvalve", "Handschaltung Vierwegeventil (H-0-A)", "")
+        self.into_data_int(data, "I1319", "manual_multiext", "Handschaltung Multiausgang Ext. (H-0-A)", "")
+        self.into_data_float(data, "I2020", "temp_surrounding", "Umgebung", "°C")
+        self.into_data_float(data, "I2021", "temp_suction_air", "Sauggas", "°C")
+        self.into_data_float(data, "I2023", "temp_sump", "Ölsumpf", "°C")
 
         #
         # "I51" : "state" : "Status der Wärmepumpenkomponenten"
         #
-        try:
-            val = data["I51"]
-            key = "state"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": val["value"],
-                    "name": "Status der Wärmepumpenkomponenten",
-                    "unit": "",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
+        self.into_data_int(data, "I51", "state", "Status der Wärmepumpenkomponenten", "")
 
         #
         # "I51.0" : "state_sourcepump" : "Status der Wärmepumpenkomponenten: Quellenpumpe"
@@ -414,7 +228,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[0] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[0],
                     "name": "Status der Wärmepumpenkomponenten: Quellenpumpe",
                     "unit": "",
                     "time": val["time"],
@@ -437,7 +251,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[1] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[1],
                     "name": "Status der Wärmepumpenkomponenten: Heizungsumwälzpumpe",
                     "unit": "",
                     "time": val["time"],
@@ -460,7 +274,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[2] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[2],
                     "name": "Status der Wärmepumpenkomponenten: Freigabe Regelung EVD",
                     "unit": "",
                     "time": val["time"],
@@ -483,7 +297,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[3] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[3],
                     "name": "Status der Wärmepumpenkomponenten: Verdichter 1",
                     "unit": "",
                     "time": val["time"],
@@ -506,7 +320,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[4] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[4],
                     "name": "Status der Wärmepumpenkomponenten: Verdichter 2",
                     "unit": "",
                     "time": val["time"],
@@ -529,7 +343,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[5] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[5],
                     "name": "Status der Wärmepumpenkomponenten: externer Wärmeerzeuger",
                     "unit": "",
                     "time": val["time"],
@@ -552,7 +366,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[6] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[6],
                     "name": "Status der Wärmepumpenkomponenten: Alarmausgang",
                     "unit": "",
                     "time": val["time"],
@@ -575,7 +389,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[7] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[7],
                     "name": "Status der Wärmepumpenkomponenten: Motorventil Kühlbetrieb",
                     "unit": "",
                     "time": val["time"],
@@ -598,7 +412,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[8] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[8],
                     "name": "Status der Wärmepumpenkomponenten: Motorventil Warmwasser",
                     "unit": "",
                     "time": val["time"],
@@ -621,7 +435,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[9] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[9],
                     "name": "Status der Wärmepumpenkomponenten: Motorventil Pool",
                     "unit": "",
                     "time": val["time"],
@@ -644,7 +458,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[10] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[10],
                     "name": "Status der Wärmepumpenkomponenten: Solarbetrieb",
                     "unit": "",
                     "time": val["time"],
@@ -667,7 +481,7 @@ class Collection:
             if val["status"]:
                 self.__data[key] = {
                     "key": key,
-                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[11] == '1',
+                    "value": (("{:08b}".format(int(val["value"])))[::-1] + '00000000000')[11],
                     "name": "Status der Wärmepumpenkomponenten: 4-Wegeventil im Kältekreis",
                     "unit": "",
                     "time": val["time"],
@@ -682,31 +496,5 @@ class Collection:
             pass
 
         #
-        # "A61" : "hysteresis_heating" : "Hysterese Heizung"
-        #
-        try:
-            val = data["A61"]
-            key = "hysteresis_heating"
-            if val["status"]:
-                self.__data[key] = {
-                    "key": key,
-                    "value": int(val["value"]) / 10.0,
-                    "name": "Hysterese Heizung",
-                    "unit": "°C",
-                    "time": val["time"],
-                    "status": True
-                }
-                logging.debug(
-                    "{0} = {1} {2}".format(self.__data[key]["key"], self.__data[key]["value"],
-                                           self.__data[key]["unit"]))
-            else:
-                self.__data[key]["status"] = False
-        except KeyError:
-            pass
-
-
-
-
-        #
-        #print()
+        # print()
         pass

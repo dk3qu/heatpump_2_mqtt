@@ -6,11 +6,6 @@ import sys
 
 
 class Connection:
-    """
-    Direkte Verbindung zur Wärmepumpe.
-
-    Es wird sich um das Login und die Abfrage der einzenen Keys gekümmert.
-    """
 
     def __init__(self, ip, user, pwd):
         self.__ip = ip

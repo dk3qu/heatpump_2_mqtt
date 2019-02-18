@@ -54,7 +54,7 @@ sudo chown -R pi:pi /opt/heatpump_2_mqtt
 
 # heatpump_2_mqtt-Prog
 cd /opt/heatpump_2_mqtt
-su pi -c "nohup /opt/heatpump_2_mqtt/main_heatpump.py >/dev/null 2>&1 &"
+su pi -c "nohup /opt/heatpump_2_mqtt/heatpump.py >/dev/null 2>&1 &"
 
 exit 0
 ```

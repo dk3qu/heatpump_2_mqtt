@@ -8,6 +8,7 @@ import csv
 # --- LOGGING ---
 import os
 import os.path
+import sys
 import json
 import logging
 import logging.config
@@ -54,6 +55,9 @@ def setup_config(
     value = os.getenv(env_key, None)
     if value:
         path = value
+    elif os.path.exists("/etc/heatpump_2_mqtt/config.json"):
+        path = "/etc/heatpump_2_mqtt/config.json"
+    #
     logging.debug("Config laden: {0}".format(path))
     if os.path.exists(path):
         try:
@@ -64,9 +68,11 @@ def setup_config(
         except ValueError as err:
             pass
             logging.error("Config konnte nicht geladen werden ! '{0}' -> {1}".format(path, err.args))
+            sys.exit(-1)
     else:
         config = {"STATUS": False}
         logging.error("Config konnte nicht gefunden werden !")
+        sys.exit(-2)
 
 
 setup_config()
